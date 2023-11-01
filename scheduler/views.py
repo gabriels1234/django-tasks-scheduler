@@ -30,9 +30,15 @@ def get_queue(queue_name: str) -> DjangoQueue:
 
 def get_worker_executions(worker):
     res = list()
+    logger.debug(f'Getting executions for worker {worker.name}')
     for queue in worker.queues:
-        curr_jobs = queue.get_all_jobs()
-        curr_jobs = [j for j in curr_jobs if j.worker_name == worker.name]
+        logger.debug(f'Getting executions for worker {worker.name}, queue {queue.name}')
+        curr_jobs_all = queue.get_all_jobs()
+        logger.debug(f'Found {len(curr_jobs_all)}  jobs for worker {worker.name}, queue {queue.name}')
+        curr_jobs = [j for j in curr_jobs_all if j.worker_name == worker.name]
+        logger.debug(f'Found {len(curr_jobs)} jobs for worker {worker.name}, queue {queue.name}')
+        if len(curr_jobs_all) > len(curr_jobs):
+            logger.debug(f'Difference from current {len(curr_jobs_all-curr_jobs)}')
         res.extend(curr_jobs)
     return res
 
@@ -69,7 +75,12 @@ def get_statistics(run_maintenance_tasks=False):
             connection_kwargs = connection.connection_pool.connection_kwargs
 
             if run_maintenance_tasks:
+                logger.debug(f'Cleaning registries for queue {queue_name}')
+                # print job count before and after cleaning
+                logger.debug(f'Before cleaning: {len(queue.get_all_job_ids())}')
                 queue.clean_registries()
+                logger.debug(f'Registries cleaned for queue {queue_name}')
+                logger.debug(f'After cleaning: {len(queue.get_all_job_ids())}')
 
             # Raw access to the first item from left of the redis list.
             # This might not be accurate since new job can be added from the left
@@ -262,6 +273,7 @@ def job_detail(request, job_id: str):
 @never_cache
 @staff_member_required
 def clear_queue_registry(request, queue_name, registry_name):
+    logger.debug(f'Clearing registry {registry_name} for queue {queue_name}')
     queue = get_queue(queue_name)
     registry = queue.get_registry(registry_name)
     if registry is None:

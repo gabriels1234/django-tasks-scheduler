@@ -79,5 +79,6 @@ def create_worker(*queue_names, **kwargs):
 def get_job_executions(queue_name, scheduled_task):
     queue = get_queue(queue_name)
     job_list = queue.get_all_jobs()
+    logger.debug(f'MAUDE Found {len(job_list)} jobs in queue {queue_name}')
     res = list(filter(lambda j: j.is_execution_of(scheduled_task), job_list))
     return res

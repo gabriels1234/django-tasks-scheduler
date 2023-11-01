@@ -47,6 +47,8 @@ class Command(BaseCommand):
                             help='Maximum number of jobs to execute before terminating worker')
         parser.add_argument('--fork-job-execution', action='store', default=True, dest='fork_job_execution', type=bool,
                             help='Fork job execution to another process')
+        parser.add_argument('--with-scheduler', action='store', default=False, dest='with_scheduler', type=bool,
+                            help='Dummy argument to make the command compatible with django-rq, etc')
         parser.add_argument(
             'queues', nargs='*', type=str,
             help='The queues to work on, separated by space, all queues should be using the same redis')

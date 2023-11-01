@@ -245,7 +245,9 @@ class DjangoScheduler(RQScheduler):
 
     def work(self):
         django.setup()
+        logger.debug("MAUDE Starting Work...")
         super(DjangoScheduler, self).work()
+        logger.debug("MAUDE Work DONE.")
 
     def enqueue_scheduled_jobs(self):
         self.reschedule_all_jobs()
