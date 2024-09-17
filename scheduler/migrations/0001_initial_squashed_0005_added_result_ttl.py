@@ -4,9 +4,9 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-    # replaces = [('scheduler', '0001_initial'), ('scheduler', '0002_add_timeout'),
-    #             ('scheduler', '0003_remove_queue_choices'), ('scheduler', '0004_add_cron_jobs'),
-    #             ('scheduler', '0005_added_result_ttl')]
+    replaces = [('scheduler', '0001_initial'), ('scheduler', '0002_add_timeout'),
+                ('scheduler', '0003_remove_queue_choices'), ('scheduler', '0004_add_cron_jobs'),
+                ('scheduler', '0005_added_result_ttl')]
 
     dependencies = [
     ]
