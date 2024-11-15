@@ -85,10 +85,6 @@ def get_connection(queue_settings, use_strict_redis=False):
     """Returns a Redis connection to use based on parameters in SCHEDULER_QUEUES"""
     return _get_redis_connection(queue_settings, use_strict_redis)
 
-def get_queue_connection(queue_name: str="default"):
-    from .settings import QUEUES
-    return get_connection(QUEUES[queue_name])
-
 def get_queue(
         name="default", default_timeout=None, is_async=None, autocommit=None, connection=None, **kwargs
 ) -> DjangoQueue:

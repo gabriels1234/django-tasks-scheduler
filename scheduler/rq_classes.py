@@ -23,7 +23,7 @@ from rq.worker import WorkerStatus
 
 from scheduler import settings
 from scheduler.connection_types import PipelineType, ConnectionType
-from scheduler.queues import get_queue_connection
+
 
 MODEL_NAMES = ["ScheduledTask", "RepeatableTask", "CronTask"]
 
@@ -31,6 +31,11 @@ rq_job_decorator = job
 ExecutionStatus = JobStatus
 InvalidJobOperation = InvalidJobOperation
 
+
+def get_queue_connection(queue_name: str="default"):
+    from .settings import QUEUES
+    from scheduler.queues import get_connection
+    return get_connection(QUEUES[queue_name])
 
 def register_sentry(sentry_dsn, **opts):
     from rq.contrib.sentry import register_sentry as rq_register_sentry
