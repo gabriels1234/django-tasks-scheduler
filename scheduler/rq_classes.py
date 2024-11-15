@@ -23,6 +23,7 @@ from rq.worker import WorkerStatus
 
 from scheduler import settings
 from scheduler.connection_types import PipelineType, ConnectionType
+from scheduler.queues import get_queue_connection
 
 MODEL_NAMES = ["ScheduledTask", "RepeatableTask", "CronTask"]
 
@@ -171,8 +172,11 @@ class DjangoQueue(Queue):
         canceled="canceled_job_registry",
     )
 
-    def __init__(self, *args, **kwargs) -> None:
-        kwargs["job_class"] = JobExecution
+    def __init__(self, *args, **kwargs):
+        kwargs['job_class'] = JobExecution
+        queue_name = args[0]
+        if 'connection' not in kwargs:
+            kwargs['connection'] = get_queue_connection(queue_name)
         super(DjangoQueue, self).__init__(*args, **kwargs)
 
     def get_registry(self, name: str) -> Union[None, BaseRegistry, "DjangoQueue"]:
@@ -276,3 +280,10 @@ class DjangoScheduler(RQScheduler):
     def enqueue_scheduled_jobs(self) -> None:
         self.reschedule_all_jobs()
         super(DjangoScheduler, self).enqueue_scheduled_jobs()
+
+
+# def create_worker(*queues, **kwargs):
+#     """Create a worker for specified queues."""
+#     if 'connection' not in kwargs:
+#         kwargs['connection'] = get_connection()
+#     return DjangoWorker(queues, **kwargs)
